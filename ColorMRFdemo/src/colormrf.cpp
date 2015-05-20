@@ -72,6 +72,10 @@ class MyApp: public wxApp
   virtual bool OnInit(); // this is the main entry point
 };
 
+inline wxString _U(const char String[] = "")
+{
+        return wxString(String, wxConvUTF8);
+}
 
 /* ImageOperations class: it handles all image operations such as
  * loading, saving, etc... 
@@ -172,7 +176,7 @@ public:
 		   const wxPoint& pos = wxDefaultPosition, 
 		   const wxSize& size = wxDefaultSize, 
 		   long style = wxHSCROLL | wxVSCROLL, 
-		   const wxString& name = "scrolledWindow"): 
+		   const wxString& name = wxT("scrolledWindow")): 
     wxScrolledWindow(parent, id, pos, size, style, name) 
   { bmp = NULL; }
   void SetBmp(wxImage *_bmp);     // assigns the image to the window.
@@ -282,7 +286,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 
   bool MyApp::OnInit()
 {
-  MyFrame *frame = new MyFrame( WINDOW_TITLE, 
+  MyFrame *frame = new MyFrame( wxT(WINDOW_TITLE), 
 				wxPoint(0,0), wxSize(800,680) );
   frame->Show( TRUE );
   frame->Centre(wxBOTH);
@@ -391,48 +395,48 @@ void MyFrame::OnPaint(wxPaintEvent& event)
   wxPaintDC pDC(this);
 
   wxString str;
-  str.Printf("Number of classes:");
+  str.Printf(_U("Number of classes:"));
   pDC.DrawText(str, 20, 325);
   
-  str.Printf("ß = ");
+  str.Printf(_U("beta"));
   pDC.DrawText(str, 43, 360);
-  str.Printf("t = ");
+  str.Printf(wxT("t = "));
   pDC.DrawText(str, 190, 360);
-  str.Printf("Class parameters:");
+  str.Printf(wxT("Class parameters:"));
   pDC.DrawText(str, 20, 465);
-  if (op_choice->GetStringSelection() != "ICM") 
+  if (op_choice->GetStringSelection() != wxT("ICM")) 
     {
-      str.Printf("T0 = ");
+      str.Printf(wxT("T0 = "));
       pDC.DrawText(str, 35, 395);
-      str.Printf("c = ");
+      str.Printf(wxT("c = "));
       pDC.DrawText(str, 190, 395);
     }
-  str.Printf(VERSION);
+  str.Printf(wxT(VERSION));
   pDC.DrawText(str, 20, 590);
-  str.Printf(COPYRIGHT);
+  str.Printf(wxT(COPYRIGHT));
   pDC.DrawText(str, 20, 605);
   //  str.Printf(ADD_COLOR); //??
   //  pDC.DrawText(str, 20, 620);
   
 
-  if (op_choice->GetStringSelection() == "MMD") 
+  if (op_choice->GetStringSelection() == wxT("MMD")) 
     {
-      str.Printf("alpha = ");
+      str.Printf(wxT("alpha = "));
       pDC.DrawText(str, 15, 430);
     }
   
-  str.Printf("iteration = ");
+  str.Printf(wxT("iteration = "));
   pDC.DrawText(str, 535, 360);
-  str.Printf("global energy = ");
+  str.Printf(wxT("global energy = "));
   pDC.DrawText(str, 535, 395);
-  str.Printf("T = ");
+  str.Printf(wxT("T = "));
   pDC.DrawText(str, 535, 430);
-  str.Printf("CPU time = ");
+  str.Printf(wxT("CPU time = "));
   pDC.DrawText(str, 535, 465);
   pDC.DrawText(wxString() << imageop->GetK(), 645, 360);
   pDC.DrawText(wxString() << imageop->GetE(), 645, 395);
   pDC.DrawText(wxString() << imageop->GetT(), 645, 430);
-  pDC.DrawText(wxString() << imageop->GetTimer() << " ms", 645, 465);
+  pDC.DrawText(wxString() << imageop->GetTimer() << _U(" ms"), 645, 465);
   event.Skip();	
 }
 
@@ -448,57 +452,57 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 				       wxSize(300,250), wxHSCROLL | wxVSCROLL);
   output_window->SetBackgroundColour(wxColour(255,255,255));
 
-  wxString luv_label[4] = {"Original", "L", "u", "v"};
+  wxString luv_label[4] = {_U("Original"), _U("L"), _U("u"), _U("v")};
   luv_choice = new wxChoice(this, ID_LUV_CHOICE, wxPoint(15,280), wxDefaultSize,
 			    4, luv_label);
-  luv_choice->SetStringSelection("Original");
+  luv_choice->SetStringSelection(_U("Original"));
   luv_choice->Disable();
 
-  load_button = new wxButton(this, ID_LOAD_BUTTON, "Load", wxPoint(125,280));
-  save_button = new wxButton(this, ID_SAVE_BUTTON, "Save", wxPoint(595,280));
-  doit_button = new wxButton(this, ID_DOIT_BUTTON, "Do it >>", 
+  load_button = new wxButton(this, ID_LOAD_BUTTON, _U("Load"), wxPoint(125,280));
+  save_button = new wxButton(this, ID_SAVE_BUTTON, _U("Save"), wxPoint(595,280));
+  doit_button = new wxButton(this, ID_DOIT_BUTTON, _U("Do it >>"), 
 			     wxPoint(358,150));
   doit_button->Disable();
   select_region_button = new wxButton(this, ID_SELECTREGION_BUTTON, 
-				      "Select classes", wxPoint(218,321));
+				      _U("Select classes"), wxPoint(218,321));
   select_region_button->Disable();
-  wxString choices[4] = {"Metropolis", "Gibbs sampler", "ICM", "MMD"};
+  wxString choices[4] = {_U("Metropolis"), _U("Gibbs sampler"), _U("ICM"), _U("MMD")};
   op_choice = new wxChoice(this, ID_CHOICE, wxPoint(346,80), wxDefaultSize, 
 			   4, choices);
-  op_choice->SetStringSelection("Metropolis");
+  op_choice->SetStringSelection(_U("Metropolis"));
 	
-  regions = new wxTextCtrl(this, ID_REGIONS, "", wxPoint(152,321), 
+  regions = new wxTextCtrl(this, ID_REGIONS, _U(""), wxPoint(152,321), 
 			   wxSize(27,20), 
 			   wxTE_PROCESS_ENTER|wxTE_RIGHT, 
 			   *(new wxTextValidator(wxFILTER_NUMERIC)));
   regions->SetMaxLength(3);
   regions->Disable();
-  tbeta = new wxTextCtrl(this, ID_BETA, "", wxPoint(67,356), 
+  tbeta = new wxTextCtrl(this, ID_BETA, _U(""), wxPoint(67,356), 
 			 wxSize(60,20), 
 			 wxTE_PROCESS_ENTER|wxTE_RIGHT, 
 			 *(new wxTextValidator(wxFILTER_NUMERIC)));
   tbeta->SetMaxLength(8);
   //  tbeta->SetValue("2.5");
   *tbeta << 2.5;
-  tt = new wxTextCtrl(this, ID_T, "", wxPoint(212,356), 
+  tt = new wxTextCtrl(this, ID_T, _U(""), wxPoint(212,356), 
 		      wxSize(60,20), wxTE_PROCESS_ENTER|wxTE_RIGHT, 
 		      *(new wxTextValidator(wxFILTER_NUMERIC)));
   tt->SetMaxLength(8);
   // tt->SetValue("0.05");
   *tt << 0.05;
-  tT0 = new wxTextCtrl(this, ID_T0, "", wxPoint(67,391), wxSize(60,20), 
+  tT0 = new wxTextCtrl(this, ID_T0, _U(""), wxPoint(67,391), wxSize(60,20), 
 		       wxTE_PROCESS_ENTER|wxTE_RIGHT, 
 		       *(new wxTextValidator(wxFILTER_NUMERIC)));
   tT0->SetMaxLength(8);
   // tT0->SetValue("4.0");
   *tT0 << 4.0;
-  tc = new wxTextCtrl(this, ID_C, "", wxPoint(212,391), wxSize(60,20), 
+  tc = new wxTextCtrl(this, ID_C, _U(""), wxPoint(212,391), wxSize(60,20), 
 		      wxTE_PROCESS_ENTER|wxTE_RIGHT, 
 		      *(new wxTextValidator(wxFILTER_NUMERIC)));
   tc->SetMaxLength(8);
   // tc->SetValue("0.98");
   *tc << 0.98;
-  talpha = new wxTextCtrl(this, ID_ALPHA, "", wxPoint(67,426), 
+  talpha = new wxTextCtrl(this, ID_ALPHA, _U(""), wxPoint(67,426), 
 			  wxSize(60,20), wxTE_PROCESS_ENTER|wxTE_RIGHT, 
 			  *(new wxTextValidator(wxFILTER_NUMERIC)));
   talpha->SetMaxLength(8);
@@ -506,11 +510,11 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   *talpha << 0.1;
   talpha->Hide();
 
-  gaussians = new wxTextCtrl(this, ID_GAUSSIANS, "", wxPoint(20,480), 
+  gaussians = new wxTextCtrl(this, ID_GAUSSIANS, _U(""), wxPoint(20,480), 
 			     wxSize(500,100), 
 			     wxTE_MULTILINE|wxTE_DONTWRAP|wxTE_READONLY,
 			     wxDefaultValidator);
-  gaussians->SetValue("# Mean (L, u, v)\t\tVariance (L, u, v)\t\tCovariance (L-u, L-v, u-v)\n");
+  gaussians->SetValue(_U("# Mean (L, u, v)\t\tVariance (L, u, v)\t\tCovariance (L-u, L-v, u-v)\n"));
 
   regs = NULL;
   act_region = -1;
@@ -527,8 +531,8 @@ MyFrame::~MyFrame()
 void MyFrame::OnOpen(wxCommandEvent& event)
 {
   wxString image_name;
-  wxFileDialog* fdialog = new wxFileDialog(this, "Open file", "", "", 
-					   "BMP files (*.bmp)|*.bmp", 
+  wxFileDialog* fdialog = new wxFileDialog(this, _U("Open file"), _U(""), _U(""), 
+					   _U("BMP files (*.bmp)|*.bmp"), 
 					   wxOPEN|wxCHANGE_DIR);
 	
   if (fdialog->ShowModal() == wxID_OK)
@@ -547,8 +551,8 @@ void MyFrame::OnOpen(wxCommandEvent& event)
 	  // enable input fields
 	  regions->Enable();
 	  luv_choice->Enable();
-	  luv_choice->SetStringSelection("Original");
-	  select_region_button->SetLabel("Select classes");  // reset button
+	  luv_choice->SetStringSelection(_U("Original"));
+	  select_region_button->SetLabel(_U("Select classes"));  // reset button
 							     // label
 	  if (regs != NULL) 
 	    {
@@ -569,8 +573,8 @@ void MyFrame::OnSave(wxCommandEvent& event)
   if (imageop->IsOutput()) // if there is anything to save
     {
       wxString image_name;
-      wxFileDialog* fdialog = new wxFileDialog(this, "Save file as", "", "", 
-					       "BMP files (*.bmp)|*.bmp", 
+      wxFileDialog* fdialog = new wxFileDialog(this, _U("Save file as"), _U(""), _U(""), 
+					       _U("BMP files (*.bmp)|*.bmp"), 
 					       wxSAVE | wxCHANGE_DIR | 
 					       wxOVERWRITE_PROMPT);
 
@@ -578,7 +582,7 @@ void MyFrame::OnSave(wxCommandEvent& event)
 	{
 	  image_name = fdialog->GetPath();
 	  if (!imageop->SaveBmp(image_name)) // saving failed
-	    wxLogError("Can't save image!", "ERROR");
+	    wxLogError(_U("Can't save image!"), "ERROR");
 	  //	    wxMessageBox("Can't save image!", "ERROR");
 	}
     }
@@ -591,68 +595,68 @@ void MyFrame::OnDoit(wxCommandEvent& event)
 
   if ((beta=tbeta->GetValue()).Length() == 0)	
     {
-      wxLogWarning("ß value missing!", "Warning!");
+      wxLogWarning(_U("ß value missing!"), "Warning!");
       //     wxMessageBox("ß value missing", "Error");
       return;
     }
   else	// TODO: check value!
-    imageop->SetBeta(atof(beta));
+    imageop->SetBeta(atof((const char*)beta.mb_str(wxConvUTF8)));
   if ((t=tt->GetValue()).Length() == 0)	
     {
-      wxLogWarning("t value missing!", "Warning!");
+      wxLogWarning(_U("t value missing!"), "Warning!");
       //      wxMessageBox("t value missing", "Error");
       return;
     }
   else	// TODO: check value!
-    imageop->SetT(atof(t));
-  if (op_choice->GetStringSelection() != "ICM")
+    imageop->SetT(atof((const char*)t.mb_str(wxConvUTF8)));
+  if (op_choice->GetStringSelection() != _U("ICM"))
     {
       if ((T0=tT0->GetValue()).Length() == 0)	
 	{
-	  wxLogWarning("T0 value missing!", "Warning!");
+	  wxLogWarning(_U("T0 value missing!"), "Warning!");
 	  //	  wxMessageBox("T0 value missing", "Error");
 	  return;
 	}
       else	// TODO: check value!
-	imageop->SetT0(atof(T0));
+	imageop->SetT0(atof((const char*)T0.mb_str(wxConvUTF8)));
       if ((c=tc->GetValue()).Length() == 0)	
 	{
-	  wxLogWarning("c value missing!", "Warning!");
+	  wxLogWarning(_U("c value missing!"), "Warning!");
 	  //	  wxMessageBox("c value missing", "Error");
 	  return;
 	}
       else	// TODO: check value!
-	imageop->SetC(atof(c));
+	imageop->SetC(atof((const char*)c.mb_str(wxConvUTF8)));
     }
-  if (op_choice->GetStringSelection() == "MMD")
+  if (op_choice->GetStringSelection() == _U("MMD"))
     {
       if ((alpha=talpha->GetValue()).Length() == 0)	
 	{
-	  wxLogWarning("alpha value missing!", "Warning!");
+	  wxLogWarning(_U("alpha value missing!"), "Warning!");
 	  //	  wxMessageBox("alpha value missing", "Error");
 	  return;
 	}
       else	// TODO: check value!
-	imageop->SetAlpha(atof(alpha));
+	imageop->SetAlpha(atof((const char*)alpha.mb_str(wxConvUTF8)));
     }
 
   timer_valid = FALSE; // timer's value is invalid. Used by GetTimer()
   Refresh();
   timer.Reset();       // reset timer
   timer.Start();       // start timer
-  if (op_choice->GetStringSelection() == "Metropolis")
+  if (op_choice->GetStringSelection() == _U("Metropolis"))
     {
       imageop->Metropolis();
     }
-  else if (op_choice->GetStringSelection() == "MMD")
+  else if (op_choice->GetStringSelection() == _U("MMD"))
     {
       imageop->Metropolis(true);
     }
-  else if (op_choice->GetStringSelection() == "ICM")
+  else if (op_choice->GetStringSelection() == _U("ICM"))
     {
       imageop->ICM();
     }
-  else if (op_choice->GetStringSelection() == "Gibbs sampler")
+  else if (op_choice->GetStringSelection() == _U("Gibbs sampler"))
     {
       imageop->Gibbs();
     }
@@ -666,7 +670,7 @@ void MyFrame::OnDoit(wxCommandEvent& event)
  */
 void MyFrame::OnChoice(wxCommandEvent& event)
 {
-  if (op_choice->GetStringSelection() == "ICM")
+  if (op_choice->GetStringSelection() == _U("ICM"))
     {
       tT0->Hide();
       tc->Hide();
@@ -676,7 +680,7 @@ void MyFrame::OnChoice(wxCommandEvent& event)
       tT0->Show();
       tc->Show();
     }
-  if (op_choice->GetStringSelection() == "MMD")
+  if (op_choice->GetStringSelection() == _U("MMD"))
     {
       talpha->Show();
     }
@@ -689,19 +693,19 @@ void MyFrame::OnChoice(wxCommandEvent& event)
 
 void MyFrame::OnLuvChoice(wxCommandEvent& event)
 {
-  if (luv_choice->GetStringSelection() == "Original")
+  if (luv_choice->GetStringSelection() == _U("Original"))
     {
       input_window->SetBmp(imageop->GetOrigImage());
     }
-  if (luv_choice->GetStringSelection() == "L")
+  if (luv_choice->GetStringSelection() == _U("L"))
     {
       input_window->SetBmp(imageop->GetLImage());
     }
-  if (luv_choice->GetStringSelection() == "u")
+  if (luv_choice->GetStringSelection() == _U("u"))
     {
       input_window->SetBmp(imageop->GetUImage());
     }
-  if (luv_choice->GetStringSelection() == "v")
+  if (luv_choice->GetStringSelection() == _U("v"))
     {
       input_window->SetBmp(imageop->GetVImage());
     }
@@ -713,13 +717,13 @@ void MyFrame::OnLuvChoice(wxCommandEvent& event)
  */
 void MyFrame::OnRegions(wxCommandEvent& event)
 {
-  select_region_button->SetLabel("Select classes"); // reset button label
+  select_region_button->SetLabel(wxT("Select classes")); // reset button label
   {
     delete [] regs;	// remove all rectangle selections
     regs = NULL;
     act_region = -1;
     imageop->SetNoRegions(-1);
-    gaussians->SetValue("# Mean (L, u, v)\t\tVariance (L, u, v)\t\tCovariance (L-u, L-v, u-v)\n");
+    gaussians->SetValue(wxT("# Mean (L, u, v)\t\tVariance (L, u, v)\t\tCovariance (L-u, L-v, u-v)\n"));
     // clear parameter textfield
   }
   doit_button->Disable();
@@ -736,20 +740,20 @@ void MyFrame::OnRegions(wxCommandEvent& event)
 void MyFrame::OnSelectRegion(wxCommandEvent& event)
 {
   static int no_regions=0;
-  if (select_region_button->GetLabel() == "Select classes")
+  if (select_region_button->GetLabel() == _U("Select classes"))
     {
       act_region = 0;
-      no_regions = atoi(regions->GetValue());     // get number of regions
+      no_regions = atoi((const char*)(regions->GetValue()).mb_str(wxConvUTF8));     // get number of regions
       imageop->SetNoRegions(no_regions);
       regs = new int[no_regions*4];                   // aloccate memory
       for (int i=0; i<no_regions*4; ++i) regs[i] = 0; // init with 0
       select_region_button->SetLabel(act_region == no_regions-1?
-				     "Finish":"Next class");  // change label
+				     wxT("Finish"):wxT("Next class"));  // change label
     }
   else	// select next training rectangle
     {
       if (act_region == no_regions-2)
-	select_region_button->SetLabel("Finish");  // change label
+	select_region_button->SetLabel(wxT("Finish"));  // change label
       if (IsSelected(act_region)) 
 	imageop->CalculateMeanAndCovariance(act_region);
       if (++act_region >= imageop->GetNoRegions())   // no more regions
@@ -972,10 +976,10 @@ void ImageOperations::CalculateMeanAndCovariance(int region)
 	    variance[k][region] = 1e-10;
 	}
       // print parameters in gaussians textfield
-      *gaussians << region+1 << " (" << mean[0][region] << ", " << mean[1][region] << ", " <<
-	mean[2][region] << ")\t(" << variance[0][region] << ", " << variance[1][region] << ", "
-		 << variance[2][region] << ")\t(" << covariance[0][region] << ", " << 
-	covariance[1][region] << ", " << covariance[2][region] << ")\n";
+      *gaussians << region+1 << wxT(" (") << mean[0][region] << wxT(", ") << mean[1][region] << wxT(", ") <<
+	mean[2][region] << wxT(")\t(") << variance[0][region] << wxT(", ") << variance[1][region] << wxT(", ")
+		 << variance[2][region] << wxT(")\t(") << covariance[0][region] << wxT(", ") << 
+	covariance[1][region] << wxT(", ") << covariance[2][region] << wxT(")\n");
     }
 }
 
