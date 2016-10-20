@@ -37,6 +37,7 @@ static char rcsid_colormrf_cpp[]="$Id: colormrf.cpp,v 1.1 2009/01/09 20:48:09 ka
 /* wxWindows includes
  */
 #include <wx/wxprec.h>
+#include <wx/filedlg.h>
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
@@ -533,7 +534,7 @@ void MyFrame::OnOpen(wxCommandEvent& event)
   wxString image_name;
   wxFileDialog* fdialog = new wxFileDialog(this, _U("Open file"), _U(""), _U(""), 
 					   _U("BMP files (*.bmp)|*.bmp"), 
-					   wxOPEN|wxCHANGE_DIR);
+                                           wxFD_OPEN|wxFD_CHANGE_DIR);
 	
   if (fdialog->ShowModal() == wxID_OK)
     {
@@ -575,8 +576,8 @@ void MyFrame::OnSave(wxCommandEvent& event)
       wxString image_name;
       wxFileDialog* fdialog = new wxFileDialog(this, _U("Save file as"), _U(""), _U(""), 
 					       _U("BMP files (*.bmp)|*.bmp"), 
-					       wxSAVE | wxCHANGE_DIR | 
-					       wxOVERWRITE_PROMPT);
+                                               wxFD_SAVE | wxFD_CHANGE_DIR |
+                                               wxFD_OVERWRITE_PROMPT);
 
       if (fdialog->ShowModal() == wxID_OK)
 	{
@@ -595,8 +596,7 @@ void MyFrame::OnDoit(wxCommandEvent& event)
 
   if ((beta=tbeta->GetValue()).Length() == 0)	
     {
-      wxLogWarning(_U("ß value missing!"), "Warning!");
-      //     wxMessageBox("ß value missing", "Error");
+      wxLogWarning(_U("beta value missing!"), "Warning!");
       return;
     }
   else	// TODO: check value!

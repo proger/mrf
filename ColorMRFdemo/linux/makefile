@@ -27,18 +27,18 @@
 #
 # dirs, flags & libs
 #
-INCLUDE=$(HOME)/include
-LIBPATH=$(HOME)/lib-$(ARCH)
-INSTALLDIR=$(HOME)/bin-$(ARCH)
-MANDIR=$(HOME)/man
-OS=`uname -s`
-CFLAGS= `wx-config --cflags` -D$(OS) -I$(INCLUDE) -ansi -D__USE_FIXED_PROTOTYPES__
-LDFLAGS= -L$(LIBPATH) `wx-config --libs`
+
+OS=$(shell uname -s)
+CFLAGS=$(shell wx-config --cflags) -D$(OS) -D__USE_FIXED_PROTOTYPES__
+CFLAGS+= -Wno-potentially-evaluated-expression -Wno-comment
+
+LDFLAGS= $(shell wx-config --libs)
 LIBS= -lm
 ifeq ($(OS),SunOS)
 LIBS=$(LIBS) -liberty
 endif
 VPATH= ../src
+
 #
 # Source files:
 #
@@ -52,25 +52,17 @@ TARGETS= colormrfdemo
 # Suffixes
 #
 .SUFFIXES: .cpp.o
-.cpp.o:	; echo 'Compiling $*.cpp'; gcc  $(CFLAGS) -c $^
+.cpp.o:
+	g++  $(CFLAGS) -c $^
 #
 # Rules
 #
-.SILENT:
-
-all: install clean
 
 $(TARGETS) : $(OBJECTS)
-	echo 'Building $@'
-	gcc -o $@ $^ $(LDFLAGS) $(LIBS)
+	g++ -o $@ $^ $(LDFLAGS) $(LIBS)
 
 compile: $(TARGETS)
 
 clean:
-	echo 'Cleaning up'
-	/bin/rm -f $(OBJECTS)
-	/bin/rm -f $(TARGETS)
-
-install: compile
-	echo 'Installing $(TARGETS) in $(INSTALLDIR)/'
-	cp $(TARGETS) $(INSTALLDIR)
+	rm -f $(OBJECTS)
+	rm -f $(TARGETS)
